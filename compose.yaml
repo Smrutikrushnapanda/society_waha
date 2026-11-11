@@ -1,0 +1,37 @@
+name: societyos-waha
+
+services:
+  waha:
+    image: devlikeapro/waha@sha256:bafb399a27a133352523c01e16d7bcfbf77f29d938650bb9fa65e1218a2382c7
+    container_name: waha
+    restart: unless-stopped
+    stop_grace_period: 90s
+    network_mode: bridge
+    ports:
+      - "127.0.0.1:3001:3000"
+    env_file:
+      - path: .env
+        format: raw
+    volumes:
+      - type: bind
+        source: ./sessions
+        target: /app/.sessions
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./media
+        target: /app/.media
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./scripts
+        target: /opt/societyos-waha
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD", "node", "/opt/societyos-waha/healthcheck.cjs"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 120s

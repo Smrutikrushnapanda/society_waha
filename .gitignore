@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+!.env.postgres.example
+sessions/
+media/
+backups/
+*.log
+.DS_Store

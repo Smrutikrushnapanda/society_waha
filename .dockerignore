@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+!.env.postgres.example
+sessions/
+media/
+backups/
+tests/
+*.log
+*.md
+.DS_Store
+.git

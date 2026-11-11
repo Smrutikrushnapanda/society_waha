@@ -1,0 +1,8 @@
+services:
+  waha:
+    env_file:
+      - path: .env.postgres
+        format: raw
+    environment:
+      SOCIETYOS_WAHA_POSTGRES_GUARD: "true"
+      NODE_OPTIONS: "${NODE_OPTIONS:-} --require=/opt/societyos-waha/postgres-tls.cjs"

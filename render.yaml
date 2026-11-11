@@ -1,0 +1,62 @@
+services:
+  - type: web
+    name: societyos-waha
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # Chromium/WEBJS typically requires at least Standard (2 GB RAM) for stable operation.
+    plan: standard
+    healthCheckPath: /ping
+    autoDeploy: false
+    envVars:
+      - key: WHATSAPP_DEFAULT_ENGINE
+        value: WEBJS
+      - key: WAHA_NAMESPACE
+        value: all
+      - key: WAHA_SESSION_NAME
+        value: session_01m5amp8ak239hr4cs57ydvaqm
+      - key: WAHA_WORKER_RESTART_SESSIONS
+        value: "true"
+      - key: WAHA_PRINT_QR
+        value: "False"
+      - key: WAHA_LOG_FORMAT
+        value: JSON
+      - key: WAHA_LOG_LEVEL
+        value: info
+      - key: WAHA_MEDIA_STORAGE
+        value: POSTGRESQL
+      - key: WAHA_DASHBOARD_ENABLED
+        value: "true"
+      - key: WHATSAPP_SWAGGER_ENABLED
+        value: "false"
+      - key: SOCIETYOS_WAHA_POSTGRES_GUARD
+        value: "true"
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=16384 --require=/opt/societyos-waha/postgres-tls.cjs
+      # Set these secrets and service-specific URLs directly in Render Workspace 2:
+      # WHATSAPP_SESSIONS_POSTGRESQL_URL & WAHA_MEDIA_POSTGRESQL_URL must use the direct
+      # (non-pooler) Neon Project 2 endpoint with the restricted waha_runtime role and sslmode=verify-full.
+      - key: WHATSAPP_SESSIONS_POSTGRESQL_URL
+        sync: false
+      - key: WAHA_MEDIA_POSTGRESQL_URL
+        sync: false
+      - key: WAHA_API_KEY
+        sync: false
+      - key: WAHA_BASE_URL
+        sync: false
+      - key: WAHA_DASHBOARD_USERNAME
+        sync: false
+      - key: WAHA_DASHBOARD_PASSWORD
+        sync: false
+      - key: WHATSAPP_HOOK_URL
+        sync: false
+      - key: WHATSAPP_HOOK_EVENTS
+        value: session.status,message.ack
+      - key: WHATSAPP_HOOK_HMAC_KEY
+        sync: false
+      - key: WHATSAPP_HOOK_RETRIES_POLICY
+        value: linear
+      - key: WHATSAPP_HOOK_RETRIES_DELAY_SECONDS
+        value: "2"
+      - key: WHATSAPP_HOOK_RETRIES_ATTEMPTS
+        value: "4"

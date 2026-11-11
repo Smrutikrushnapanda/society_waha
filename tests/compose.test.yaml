@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_PASSWORD: ${SOCIETYOS_TEST_ADMIN_PASSWORD:?Test runner generates this value}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [test]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  waha:
+    image: devlikeapro/waha@sha256:bafb399a27a133352523c01e16d7bcfbf77f29d938650bb9fa65e1218a2382c7
+    environment:
+      WAHA_API_KEY: ${SOCIETYOS_TEST_API_KEY:?Test runner generates this value}
+      WHATSAPP_DEFAULT_ENGINE: WEBJS
+      WAHA_NAMESPACE: all
+      WAHA_MEDIA_STORAGE: LOCAL
+      WAHA_PRINT_QR: "False"
+      WAHA_LOG_LEVEL: error
+      WAHA_WORKER_RESTART_SESSIONS: "false"
+      WHATSAPP_RESTART_ALL_SESSIONS: "false"
+      WHATSAPP_SESSIONS_POSTGRESQL_URL: ${SOCIETYOS_TEST_PG_URL:?Test runner generates this value}
+      SOCIETYOS_WAHA_POSTGRES_GUARD: "true"
+      SOCIETYOS_WAHA_ALLOW_LOCAL_PG_PLAINTEXT: "true"
+      NODE_OPTIONS: --require=/opt/societyos-waha/postgres-tls.cjs
+    volumes:
+      - ../scripts:/opt/societyos-waha:ro
+    networks: [test]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  test:
+    internal: true
+
+volumes:
+  postgres_data:
